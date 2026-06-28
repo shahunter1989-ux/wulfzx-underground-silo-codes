@@ -256,17 +256,9 @@ a {
 .code-row {
   position: relative;
   isolation: isolate;
-  min-height: clamp(29px, 3.62vw, 44px);
-  padding: clamp(4px, 0.46vw, 6px) clamp(3px, 0.42vw, 6px);
+  min-height: clamp(31px, 3.88vw, 47px);
+  padding: 0;
   overflow: hidden;
-  border: 1px solid rgba(85, 255, 146, 0.24);
-  border-radius: 3px;
-  background:
-    linear-gradient(180deg, rgba(50, 255, 128, 0.055), rgba(7, 31, 15, 0.18)),
-    linear-gradient(90deg, rgba(35, 255, 117, 0.055), transparent 42%, rgba(35, 255, 117, 0.04));
-  box-shadow:
-    inset 0 0 9px rgba(42, 255, 126, 0.08),
-    0 0 7px rgba(42, 255, 126, 0.06);
 }
 
 .code-row::before {
@@ -275,7 +267,7 @@ a {
   inset: auto 8% 0;
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(139, 255, 181, 0.54), transparent);
-  opacity: 0.62;
+  opacity: 0.36;
 }
 
 .code-row::after {
@@ -302,10 +294,25 @@ a {
   color: rgba(164, 255, 194, 0.74);
   font-size: clamp(7px, 0.72vw, 10px);
   line-height: 1;
+  margin: 0 0 clamp(2px, 0.22vw, 3px);
+  padding-left: clamp(1px, 0.18vw, 3px);
 }
 
 .code-row dd {
-  margin-top: clamp(2px, 0.26vw, 4px);
+  margin: 0;
+  min-height: clamp(20px, 2.54vw, 31px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 clamp(3px, 0.42vw, 6px);
+  border: 1px solid rgba(85, 255, 146, 0.24);
+  border-radius: 3px;
+  background:
+    linear-gradient(180deg, rgba(50, 255, 128, 0.055), rgba(7, 31, 15, 0.18)),
+    linear-gradient(90deg, rgba(35, 255, 117, 0.055), transparent 42%, rgba(35, 255, 117, 0.04));
+  box-shadow:
+    inset 0 0 9px rgba(42, 255, 126, 0.08),
+    0 0 7px rgba(42, 255, 126, 0.06);
   color: #7dffac;
   font-size: clamp(12px, 1.68vw, 22px);
   line-height: 0.98;
@@ -543,16 +550,19 @@ a {
   }
 
   .code-row {
-    min-height: 24px;
-    padding: 3px 1px;
+    min-height: 27px;
   }
 
   .code-row dt {
     font-size: clamp(6px, 1.75vw, 8px);
+    margin-bottom: 1px;
+    padding-left: 1px;
   }
 
   .code-row dd {
-    font-size: clamp(7px, 2.18vw, 9px);
+    font-size: clamp(7px, 2.12vw, 9px);
+    min-height: 18px;
+    padding-inline: 1px;
   }
 
   .home-link {
