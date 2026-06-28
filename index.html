@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Wulfzx.Underground Enclave terminal dashboard for Fallout 76 weekly nuclear silo codes."
+    />
+    <title>Wulfzx.Underground | Enclave Silo Codes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="page-shell" aria-labelledby="page-title">
+      <h1 id="page-title" class="sr-only">
+        Fallout 76 Weekly Nuclear Silo Codes
+      </h1>
+
+      <section class="pipboy-stage" aria-label="Enclave Pip-Boy silo code terminal">
+        <div class="ambient-glow" aria-hidden="true"></div>
+
+        <div class="pipboy-frame">
+          <img
+            class="pipboy-image"
+            src="assets/pipboy-enclave.png"
+            alt="Black Enclave Pip-Boy terminal frame"
+          />
+
+          <div class="screen-overlay" aria-live="polite">
+            <div class="screen-crt" aria-hidden="true"></div>
+
+            <div class="terminal-content">
+              <p class="enclave-line">==== PROPERTY OF THE ENCLAVE ====</p>
+
+              <p class="terminal-title">FALLOUT 76 WEEKLY SILO CODES</p>
+
+              <dl class="terminal-grid">
+                <div class="grid-row grid-row-wide">
+                  <dt>VALID:</dt>
+                  <dd id="validRange">Jun 24 &ndash; Jul 1, 2026</dd>
+                </div>
+
+                <div class="code-row">
+                  <dt>SITE ALPHA</dt>
+                  <dd id="alphaCode">48880142</dd>
+                </div>
+
+                <div class="code-row">
+                  <dt>SITE BRAVO</dt>
+                  <dd id="bravoCode">20284491</dd>
+                </div>
+
+                <div class="code-row">
+                  <dt>SITE CHARLIE</dt>
+                  <dd id="charlieCode">38280383</dd>
+                </div>
+
+                <div class="grid-row">
+                  <dt>RESET:</dt>
+                  <dd id="resetText">Every Tuesday &mdash; 5:00 PM PDT</dd>
+                </div>
+
+                <div class="grid-row">
+                  <dt>REQUIRED:</dt>
+                  <dd id="requiredItem">Nuclear Keycard</dd>
+                </div>
+
+                <div class="grid-row">
+                  <dt>STATUS:</dt>
+                  <dd id="statusText">AUTHORIZED</dd>
+                </div>
+
+                <div class="grid-row grid-row-wide countdown-row">
+                  <dt>COUNTDOWN:</dt>
+                  <dd id="countdownText">--d --h --m --s</dd>
+                </div>
+              </dl>
+
+              <a class="copy-button" href="https://wzxu.pro">Home</a>
+            </div>
+          </div>
+        </div>
+
+        <footer class="site-footer">WULFZX. Underground</footer>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
