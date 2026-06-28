@@ -519,7 +519,11 @@ a {
   }
 
   .page-shell {
-    padding: 10px 12px;
+    padding: 10px 12px 46px;
+  }
+
+  .pipboy-stage {
+    transform: translateY(-4%);
   }
 
   .pipboy-frame {
