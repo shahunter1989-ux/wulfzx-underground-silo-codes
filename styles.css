@@ -6,15 +6,15 @@
   --terminal-bg: rgba(2, 16, 9, 0.9);
   --page-bg: #030504;
   --footer: rgba(174, 255, 202, 0.58);
-  --pipboy-width: min(96vw, 1180px, calc((100vh - 150px) * 1.099));
-  --screen-left: 24.62%;
-  --screen-top: 24.64%;
-  --screen-width: 42.45%;
-  --screen-height: 36.82%;
-  --screen-safe-left: clamp(10px, 1.08vw, 16px);
-  --screen-safe-right: clamp(28px, 3vw, 43px);
-  --screen-safe-top: clamp(14px, 1.45vw, 22px);
-  --screen-safe-bottom: clamp(17px, 1.85vw, 27px);
+  --pipboy-width: min(96vw, 1500px, calc((100vh - 150px) * 1.777));
+  --screen-left: 22.55%;
+  --screen-top: 18.35%;
+  --screen-width: 42.05%;
+  --screen-height: 58.2%;
+  --screen-safe-left: clamp(16px, 1.55vw, 27px);
+  --screen-safe-right: clamp(18px, 1.75vw, 31px);
+  --screen-safe-top: clamp(10px, 0.95vw, 17px);
+  --screen-safe-bottom: clamp(18px, 1.7vw, 30px);
 }
 
 * {
@@ -91,7 +91,7 @@ a {
 .pipboy-frame {
   position: relative;
   width: var(--pipboy-width);
-  aspect-ratio: 1315 / 1196;
+  aspect-ratio: 1672 / 941;
   filter:
     drop-shadow(0 32px 42px rgba(0, 0, 0, 0.72))
     drop-shadow(0 0 30px rgba(47, 255, 122, 0.12));
@@ -111,11 +111,11 @@ a {
   top: var(--screen-top);
   width: var(--screen-width);
   height: var(--screen-height);
-  border-radius: 10.5% / 13%;
+  border-radius: 9.5% / 11%;
   overflow: hidden;
   background:
-    radial-gradient(ellipse at 50% 42%, rgba(80, 255, 152, 0.1), transparent 61%),
-    linear-gradient(180deg, rgba(3, 24, 11, 0.32), rgba(1, 10, 5, 0.2));
+    radial-gradient(ellipse at 50% 40%, rgba(80, 255, 152, 0.12), transparent 58%),
+    linear-gradient(180deg, rgba(2, 19, 9, 0.74), rgba(1, 9, 5, 0.62));
   border: 1px solid rgba(105, 255, 161, 0.045);
   box-shadow:
     inset 0 0 32px rgba(22, 255, 105, 0.11),
@@ -194,8 +194,8 @@ a {
   padding: 0;
   border-radius: 6px;
   background:
-    radial-gradient(ellipse at 50% 42%, rgba(2, 17, 8, 0.88), rgba(2, 17, 8, 0.68) 58%, rgba(2, 17, 8, 0.32) 100%),
-    linear-gradient(180deg, rgba(4, 24, 11, 0.46), rgba(2, 13, 7, 0.26));
+    radial-gradient(ellipse at 50% 42%, rgba(2, 17, 8, 0.98), rgba(2, 17, 8, 0.9) 58%, rgba(2, 17, 8, 0.72) 100%),
+    linear-gradient(180deg, rgba(4, 24, 11, 0.78), rgba(2, 13, 7, 0.58));
   color: var(--terminal-green);
   text-shadow:
     0 0 4px rgba(66, 255, 136, 0.88),
@@ -507,19 +507,23 @@ a {
 
 @media (max-width: 760px) {
   :root {
-    --pipboy-width: min(94vw, calc((100svh - 58px) * 1.099));
-    --screen-left: 24.6%;
-    --screen-top: 24.85%;
-    --screen-width: 42.6%;
-    --screen-height: 36.45%;
-    --screen-safe-left: clamp(5px, 1.25vw, 8px);
-    --screen-safe-right: clamp(13px, 3.6vw, 23px);
-    --screen-safe-top: clamp(7px, 1.95vw, 12px);
-    --screen-safe-bottom: clamp(8px, 2vw, 13px);
+    --pipboy-width: min(80vw, calc((100svh - 70px) * 1.777));
+    --screen-left: 22.55%;
+    --screen-top: 18.35%;
+    --screen-width: 42.05%;
+    --screen-height: 58.2%;
+    --screen-safe-left: clamp(6px, 1.7vw, 10px);
+    --screen-safe-right: clamp(6px, 1.9vw, 11px);
+    --screen-safe-top: clamp(4px, 1.25vw, 7px);
+    --screen-safe-bottom: clamp(7px, 2vw, 12px);
   }
 
   .page-shell {
     padding: 10px 12px;
+  }
+
+  .pipboy-frame {
+    transform: translateX(-6%);
   }
 
   .terminal-grid {
