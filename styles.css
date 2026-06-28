@@ -6,7 +6,7 @@
   --terminal-bg: rgba(2, 16, 9, 0.9);
   --page-bg: #030504;
   --footer: rgba(174, 255, 202, 0.58);
-  --pipboy-width: min(96vw, 1180px, calc((100vh - 70px) * 1.099));
+  --pipboy-width: min(96vw, 1180px, calc((100vh - 150px) * 1.099));
   --screen-left: 24.62%;
   --screen-top: 24.64%;
   --screen-width: 42.45%;
@@ -194,8 +194,8 @@ a {
   padding: 0;
   border-radius: 6px;
   background:
-    radial-gradient(ellipse at 50% 42%, rgba(2, 17, 8, 0.78), rgba(2, 17, 8, 0.52) 58%, rgba(2, 17, 8, 0.16) 100%),
-    linear-gradient(180deg, rgba(4, 24, 11, 0.36), rgba(2, 13, 7, 0.14));
+    radial-gradient(ellipse at 50% 42%, rgba(2, 17, 8, 0.88), rgba(2, 17, 8, 0.68) 58%, rgba(2, 17, 8, 0.32) 100%),
+    linear-gradient(180deg, rgba(4, 24, 11, 0.46), rgba(2, 13, 7, 0.26));
   color: var(--terminal-green);
   text-shadow:
     0 0 4px rgba(66, 255, 136, 0.88),
@@ -448,11 +448,13 @@ a {
   }
 }
 
-.copy-button {
+.home-link {
   align-self: center;
-  margin-top: clamp(4px, 0.58vw, 8px);
-  min-height: clamp(18px, 2vw, 26px);
-  padding: 0 clamp(8px, 1vw, 13px);
+  min-height: clamp(24px, 2.6vw, 34px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 clamp(12px, 1.35vw, 18px);
   border: 1px solid var(--terminal-green-dim);
   border-radius: 2px;
   background: rgba(2, 20, 10, 0.72);
@@ -461,17 +463,18 @@ a {
     inset 0 0 12px rgba(57, 255, 127, 0.1),
     0 0 10px rgba(57, 255, 127, 0.12);
   cursor: pointer;
-  font-size: clamp(8px, 0.9vw, 12px);
+  font-size: clamp(10px, 1.1vw, 14px);
   line-height: 1;
   text-transform: uppercase;
+  text-shadow: 0 0 8px rgba(66, 255, 136, 0.45);
   transition:
     border-color 160ms ease,
     background-color 160ms ease,
     box-shadow 160ms ease;
 }
 
-.copy-button:hover,
-.copy-button:focus-visible {
+.home-link:hover,
+.home-link:focus-visible {
   background: rgba(34, 255, 118, 0.14);
   border-color: rgba(128, 255, 173, 0.72);
   box-shadow:
@@ -479,7 +482,7 @@ a {
     0 0 16px rgba(57, 255, 127, 0.26);
 }
 
-.copy-button:focus-visible {
+.home-link:focus-visible {
   outline: 2px solid rgba(174, 255, 202, 0.8);
   outline-offset: 2px;
 }
@@ -487,7 +490,7 @@ a {
 .site-footer {
   color: var(--footer);
   font-size: clamp(11px, 1.6vw, 16px);
-  letter-spacing: 0.14em;
+  letter-spacing: 0.06em;
   text-align: center;
   text-transform: uppercase;
   text-shadow: 0 0 12px rgba(66, 255, 136, 0.3);
@@ -550,10 +553,10 @@ a {
     font-size: clamp(7px, 2.18vw, 9px);
   }
 
-  .copy-button {
-    min-height: 16px;
-    padding-inline: 7px;
-    font-size: clamp(7px, 2vw, 9px);
+  .home-link {
+    min-height: 24px;
+    padding-inline: 13px;
+    font-size: clamp(10px, 2.8vw, 12px);
   }
 }
 
