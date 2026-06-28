@@ -9,9 +9,10 @@
   --pipboy-width: min(96vw, 1180px, calc((100vh - 70px) * 1.099));
   --screen-left: 24.62%;
   --screen-top: 24.64%;
-  --screen-width: 42.92%;
+  --screen-width: 42.45%;
   --screen-height: 36.82%;
-  --screen-safe-x: clamp(17px, 1.85vw, 27px);
+  --screen-safe-left: clamp(10px, 1.08vw, 16px);
+  --screen-safe-right: clamp(28px, 3vw, 43px);
   --screen-safe-top: clamp(14px, 1.45vw, 22px);
   --screen-safe-bottom: clamp(17px, 1.85vw, 27px);
 }
@@ -146,13 +147,24 @@ a {
 .screen-overlay::after {
   content: "";
   position: absolute;
-  inset: 0;
+  inset: -10% 0;
   background:
-    linear-gradient(rgba(255, 255, 255, 0.018), rgba(255, 255, 255, 0) 44%),
+    linear-gradient(
+      180deg,
+      transparent 0%,
+      transparent 42%,
+      rgba(166, 255, 197, 0.07) 48%,
+      rgba(255, 255, 255, 0.03) 50%,
+      rgba(166, 255, 197, 0.055) 52%,
+      transparent 58%,
+      transparent 100%
+    ),
     radial-gradient(ellipse at center, transparent 44%, rgba(0, 0, 0, 0.2) 100%);
   pointer-events: none;
   mix-blend-mode: screen;
-  animation: glassGhost 5.6s ease-in-out infinite;
+  animation:
+    glassGhost 5.6s ease-in-out infinite,
+    refreshBand 4.8s linear infinite;
 }
 
 .screen-crt {
@@ -161,20 +173,20 @@ a {
   background:
     repeating-linear-gradient(
       180deg,
-      rgba(120, 255, 165, 0.13) 0,
-      rgba(120, 255, 165, 0.13) 1px,
+      rgba(120, 255, 165, 0.16) 0,
+      rgba(120, 255, 165, 0.16) 1px,
       transparent 1px,
       transparent 5px
     );
   background-size: 100% 5px;
-  opacity: 0.25;
+  opacity: 0.31;
   pointer-events: none;
   animation: scanlineDrift 3.8s linear infinite;
 }
 
 .terminal-content {
   position: absolute;
-  inset: var(--screen-safe-top) var(--screen-safe-x) var(--screen-safe-bottom);
+  inset: var(--screen-safe-top) var(--screen-safe-right) var(--screen-safe-bottom) var(--screen-safe-left);
   z-index: 1;
   min-height: 0;
   display: flex;
@@ -218,7 +230,7 @@ a {
 .terminal-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(2px, 0.36vw, 5px) clamp(4px, 0.56vw, 8px);
+  gap: clamp(2px, 0.32vw, 5px) clamp(3px, 0.42vw, 6px);
   align-content: start;
   padding-top: clamp(3px, 0.48vw, 6px);
   min-height: 0;
@@ -245,7 +257,7 @@ a {
   position: relative;
   isolation: isolate;
   min-height: clamp(29px, 3.62vw, 44px);
-  padding: clamp(4px, 0.48vw, 6px) clamp(4px, 0.52vw, 7px);
+  padding: clamp(4px, 0.46vw, 6px) clamp(3px, 0.42vw, 6px);
   overflow: hidden;
   border: 1px solid rgba(85, 255, 146, 0.24);
   border-radius: 3px;
@@ -349,7 +361,7 @@ a {
   }
 
   50% {
-    filter: brightness(1.16);
+    filter: brightness(1.24);
     opacity: 1;
   }
 }
@@ -408,6 +420,16 @@ a {
 
   54% {
     opacity: 0.58;
+  }
+}
+
+@keyframes refreshBand {
+  0% {
+    transform: translateY(-68%);
+  }
+
+  100% {
+    transform: translateY(68%);
   }
 }
 
@@ -476,9 +498,10 @@ a {
     --pipboy-width: min(94vw, calc((100svh - 58px) * 1.099));
     --screen-left: 24.6%;
     --screen-top: 24.85%;
-    --screen-width: 43.05%;
+    --screen-width: 42.6%;
     --screen-height: 36.45%;
-    --screen-safe-x: clamp(8px, 2.15vw, 14px);
+    --screen-safe-left: clamp(5px, 1.25vw, 8px);
+    --screen-safe-right: clamp(13px, 3.6vw, 23px);
     --screen-safe-top: clamp(7px, 1.95vw, 12px);
     --screen-safe-bottom: clamp(8px, 2vw, 13px);
   }
@@ -546,6 +569,7 @@ a {
 
   .screen-overlay,
   .screen-overlay::before,
+  .screen-overlay::after,
   .screen-crt,
   .code-row::after,
   .code-row dd,
