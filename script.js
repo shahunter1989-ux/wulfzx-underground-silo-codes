@@ -99,14 +99,20 @@ function getDayOfYear(date) {
 function renderWorldClockRows() {
   elements.worldClockGrid.innerHTML = worldClockConfig
     .map(
-      (clock, index) => `
-        <div class="world-clock-row" data-clock-index="${index}">
+      (clock, index) => {
+        const clockPriority = [0, 1, 2, 5].includes(index)
+          ? "world-clock-primary"
+          : "world-clock-secondary";
+
+        return `
+        <div class="world-clock-row ${clockPriority}" data-clock-index="${index}">
           <span class="world-clock-place">${clock.label}</span>
           <span class="world-clock-country">${clock.country}</span>
           <span class="world-clock-zone">${clock.timeZone}</span>
           <time class="world-clock-time" data-world-time="${index}">--:--:--</time>
         </div>
-      `
+      `;
+      }
     )
     .join("");
 }

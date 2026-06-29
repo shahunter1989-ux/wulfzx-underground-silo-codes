@@ -455,6 +455,45 @@ a {
   }
 }
 
+@keyframes telemetryPulse {
+  0%,
+  100% {
+    border-color: rgba(80, 255, 145, 0.16);
+    box-shadow:
+      inset 0 0 18px rgba(45, 255, 126, 0.08),
+      0 0 18px rgba(35, 255, 118, 0.06);
+  }
+
+  50% {
+    border-color: rgba(120, 255, 174, 0.32);
+    box-shadow:
+      inset 0 0 18px rgba(45, 255, 126, 0.13),
+      0 0 22px rgba(35, 255, 118, 0.14);
+  }
+}
+
+@keyframes telemetryScan {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 0 8px;
+  }
+}
+
+@keyframes timeGlowSweep {
+  0%,
+  72%,
+  100% {
+    filter: brightness(1);
+  }
+
+  80% {
+    filter: brightness(1.28);
+  }
+}
+
 .home-link {
   align-self: center;
   margin-top: clamp(-8px, -0.65vw, -4px);
@@ -524,6 +563,9 @@ a {
   box-shadow:
     inset 0 0 18px rgba(45, 255, 126, 0.08),
     0 0 20px rgba(35, 255, 118, 0.08);
+  animation:
+    telemetryPulse 7.5s ease-in-out infinite,
+    telemetryScan 5.5s linear infinite;
 }
 
 .visitor-telemetry {
@@ -613,6 +655,7 @@ a {
   text-shadow:
     0 0 6px rgba(66, 255, 136, 0.62),
     0 0 14px rgba(66, 255, 136, 0.22);
+  animation: timeGlowSweep 8s ease-in-out infinite;
 }
 
 .site-footer {
@@ -626,7 +669,7 @@ a {
 
 @media (max-width: 760px) {
   :root {
-    --pipboy-width: min(80vw, calc((100svh - 70px) * 1.777));
+    --pipboy-width: min(72vw, calc((100svh - 70px) * 1.777));
     --screen-left: 22.55%;
     --screen-top: 18.35%;
     --screen-width: 42.05%;
@@ -642,11 +685,13 @@ a {
   }
 
   .pipboy-stage {
+    position: relative;
+    min-height: 760px;
     transform: translateY(-4%);
   }
 
   .pipboy-frame {
-    transform: translateX(-6%);
+    transform: none;
   }
 
   .terminal-grid {
@@ -658,26 +703,152 @@ a {
   }
 
   .telemetry-hud {
-    width: min(88vw, 420px);
-    grid-template-columns: 1fr;
-    gap: 8px;
-    margin-top: -2px;
-    transform: translateX(-3%);
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    display: block;
+    margin-top: 0;
+    transform: none;
+    pointer-events: none;
   }
 
   .visitor-telemetry,
   .world-telemetry {
-    padding: 8px;
+    display: contents;
   }
 
-  .visitor-telemetry dl {
-    grid-template-columns: 1fr 1fr;
-    gap: 6px 8px;
+  .hud-kicker {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
   }
 
+  .visitor-telemetry dl,
   .world-clock-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 5px;
+    display: contents;
+  }
+
+  .visitor-node,
+  .world-clock-row {
+    position: absolute;
+    z-index: 2;
+    width: min(31vw, 122px);
+    min-width: 0;
+    padding: 5px 6px;
+    overflow: hidden;
+    border: 1px solid rgba(80, 255, 145, 0.2);
+    border-radius: 3px;
+    background:
+      linear-gradient(180deg, rgba(2, 22, 10, 0.72), rgba(2, 11, 6, 0.46)),
+      repeating-linear-gradient(
+        180deg,
+        rgba(110, 255, 160, 0.06) 0,
+        rgba(110, 255, 160, 0.06) 1px,
+        transparent 1px,
+        transparent 6px
+      );
+    box-shadow:
+      inset 0 0 12px rgba(45, 255, 126, 0.08),
+      0 0 16px rgba(35, 255, 118, 0.08);
+    text-align: left;
+    animation:
+      telemetryPulse 7.5s ease-in-out infinite,
+      telemetryScan 5.5s linear infinite;
+  }
+
+  .visitor-node dt,
+  .world-clock-country,
+  .world-clock-zone {
+    font-size: clamp(5px, 1.42vw, 7px);
+  }
+
+  .visitor-node dd,
+  .world-clock-place {
+    font-size: clamp(7px, 1.86vw, 9px);
+  }
+
+  .visitor-node dd,
+  .world-clock-time {
+    margin-top: 2px;
+  }
+
+  .world-clock-time {
+    font-size: clamp(8px, 2.1vw, 10px);
+  }
+
+  .visitor-node-zone {
+    top: 24px;
+    left: 7vw;
+  }
+
+  .visitor-node-time {
+    top: 24px;
+    right: auto;
+    left: 43vw;
+    text-align: right;
+  }
+
+  .visitor-node-date {
+    top: 286px;
+    left: 6vw;
+  }
+
+  .visitor-node-day {
+    top: 286px;
+    right: auto;
+    left: 43vw;
+    text-align: right;
+  }
+
+  .world-clock-primary:nth-child(1) {
+    top: 350px;
+    left: 6vw;
+  }
+
+  .world-clock-primary:nth-child(2) {
+    top: 350px;
+    right: auto;
+    left: 43vw;
+    text-align: right;
+  }
+
+  .world-clock-primary:nth-child(3) {
+    top: 420px;
+    left: 6vw;
+  }
+
+  .world-clock-primary:nth-child(6) {
+    top: 420px;
+    right: auto;
+    left: 43vw;
+    text-align: right;
+  }
+
+  .world-clock-secondary {
+    top: 506px;
+    width: min(27vw, 106px);
+    text-align: center;
+  }
+
+  .world-clock-secondary:nth-child(4) {
+    left: 7vw;
+  }
+
+  .world-clock-secondary:nth-child(5) {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .world-clock-secondary:nth-child(7) {
+    right: auto;
+    left: 60vw;
+  }
+
+  .site-footer {
+    margin-top: 286px;
   }
 }
 
@@ -754,36 +925,14 @@ a {
     font-size: clamp(9px, 2.45vw, 11px);
   }
 
-  .telemetry-hud {
-    width: min(86vw, 340px);
-  }
-
-  .visitor-telemetry dl {
-    grid-template-columns: 1fr;
-  }
-
-  .world-clock-grid {
-    grid-template-columns: 1fr;
-  }
-
+  .visitor-node,
   .world-clock-row {
-    display: grid;
-    grid-template-columns: minmax(0, 0.9fr) auto;
-    gap: 3px 8px;
-    align-items: baseline;
+    width: min(30vw, 112px);
+    padding: 4px 5px;
   }
 
-  .world-clock-place,
-  .world-clock-country,
-  .world-clock-zone {
-    grid-column: 1;
-  }
-
-  .world-clock-time {
-    grid-column: 2;
-    grid-row: 1 / span 3;
-    align-self: center;
-    margin-top: 0;
+  .world-clock-secondary {
+    width: min(26vw, 96px);
   }
 }
 
@@ -803,7 +952,12 @@ a {
   .screen-crt,
   .code-row::after,
   .code-row dd,
-  .terminal-content {
+  .terminal-content,
+  .visitor-telemetry,
+  .world-telemetry,
+  .visitor-node,
+  .world-clock-row,
+  .world-clock-time {
     animation: none !important;
   }
 }
