@@ -6,7 +6,7 @@
   --terminal-bg: rgba(2, 16, 9, 0.9);
   --page-bg: #030504;
   --footer: rgba(174, 255, 202, 0.58);
-  --pipboy-width: min(96vw, 1500px, calc((100vh - 150px) * 1.777));
+  --pipboy-width: min(96vw, 1500px, calc((100vh - 240px) * 1.777));
   --screen-left: 22.55%;
   --screen-top: 18.35%;
   --screen-width: 42.05%;
@@ -496,6 +496,125 @@ a {
   outline-offset: 2px;
 }
 
+.telemetry-hud {
+  width: min(94vw, 1040px);
+  display: grid;
+  grid-template-columns: minmax(270px, 0.75fr) minmax(0, 1.25fr);
+  gap: clamp(8px, 1.2vw, 14px);
+  margin-top: clamp(2px, 0.4vw, 6px);
+  color: rgba(169, 255, 199, 0.84);
+  text-transform: uppercase;
+}
+
+.visitor-telemetry,
+.world-telemetry {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(80, 255, 145, 0.18);
+  border-radius: 4px;
+  background:
+    linear-gradient(180deg, rgba(2, 22, 10, 0.62), rgba(2, 11, 6, 0.44)),
+    repeating-linear-gradient(
+      180deg,
+      rgba(110, 255, 160, 0.055) 0,
+      rgba(110, 255, 160, 0.055) 1px,
+      transparent 1px,
+      transparent 6px
+    );
+  box-shadow:
+    inset 0 0 18px rgba(45, 255, 126, 0.08),
+    0 0 20px rgba(35, 255, 118, 0.08);
+}
+
+.visitor-telemetry {
+  padding: clamp(8px, 1vw, 12px);
+}
+
+.world-telemetry {
+  padding: clamp(8px, 1vw, 12px);
+}
+
+.hud-kicker {
+  margin: 0 0 clamp(6px, 0.75vw, 9px);
+  color: rgba(82, 255, 142, 0.78);
+  font-size: clamp(8px, 0.84vw, 11px);
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-shadow: 0 0 8px rgba(66, 255, 136, 0.42);
+}
+
+.visitor-telemetry dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px 10px;
+  margin: 0;
+}
+
+.visitor-telemetry div {
+  min-width: 0;
+}
+
+.visitor-telemetry dt,
+.world-clock-country,
+.world-clock-zone {
+  color: rgba(146, 255, 185, 0.52);
+  font-size: clamp(7px, 0.72vw, 10px);
+  line-height: 1.1;
+}
+
+.visitor-telemetry dd {
+  margin: 2px 0 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: rgba(206, 255, 222, 0.9);
+  font-size: clamp(9px, 0.95vw, 13px);
+  line-height: 1.08;
+  text-shadow: 0 0 8px rgba(66, 255, 136, 0.28);
+}
+
+.world-clock-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.world-clock-row {
+  min-width: 0;
+  padding: clamp(5px, 0.6vw, 7px);
+  border-left: 1px solid rgba(93, 255, 154, 0.2);
+  background: rgba(18, 255, 102, 0.035);
+}
+
+.world-clock-place,
+.world-clock-time {
+  display: block;
+}
+
+.world-clock-place {
+  color: rgba(216, 255, 229, 0.9);
+  font-size: clamp(8px, 0.85vw, 11px);
+  line-height: 1.05;
+}
+
+.world-clock-country,
+.world-clock-zone {
+  display: block;
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.world-clock-time {
+  margin-top: 5px;
+  color: #7dffac;
+  font-size: clamp(10px, 1.06vw, 15px);
+  line-height: 1;
+  text-shadow:
+    0 0 6px rgba(66, 255, 136, 0.62),
+    0 0 14px rgba(66, 255, 136, 0.22);
+}
+
 .site-footer {
   color: var(--footer);
   font-size: clamp(11px, 1.6vw, 16px);
@@ -514,8 +633,8 @@ a {
     --screen-height: 58.2%;
     --screen-safe-left: clamp(6px, 1.7vw, 10px);
     --screen-safe-right: clamp(6px, 1.9vw, 11px);
-    --screen-safe-top: clamp(4px, 1.25vw, 7px);
-    --screen-safe-bottom: clamp(7px, 2vw, 12px);
+    --screen-safe-top: clamp(3px, 1vw, 6px);
+    --screen-safe-bottom: clamp(3px, 1vw, 6px);
   }
 
   .page-shell {
@@ -537,46 +656,134 @@ a {
   .grid-row {
     grid-template-columns: minmax(45px, 0.34fr) minmax(0, 1fr);
   }
+
+  .telemetry-hud {
+    width: min(88vw, 420px);
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-top: -2px;
+    transform: translateX(-3%);
+  }
+
+  .visitor-telemetry,
+  .world-telemetry {
+    padding: 8px;
+  }
+
+  .visitor-telemetry dl {
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 8px;
+  }
+
+  .world-clock-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 5px;
+  }
 }
 
 @media (max-width: 480px) {
+  .enclave-line {
+    font-size: clamp(6px, 1.72vw, 8px);
+    line-height: 0.95;
+  }
+
   .terminal-title {
-    margin-top: 2px;
-    padding-bottom: 2px;
+    margin-top: 1px;
+    padding-bottom: 1px;
+    font-size: clamp(8px, 2.35vw, 10px);
+    line-height: 0.95;
   }
 
   .terminal-grid {
-    padding-top: 3px;
+    padding-top: 2px;
+    gap: 1px 2px;
   }
 
   .terminal-grid dt {
-    font-size: clamp(7px, 2vw, 9px);
+    font-size: clamp(6px, 1.72vw, 8px);
   }
 
   .terminal-grid dd {
-    font-size: clamp(7px, 2vw, 9px);
+    font-size: clamp(6px, 1.72vw, 8px);
+  }
+
+  .grid-row {
+    gap: 1px 4px;
+  }
+
+  .grid-row dt,
+  .grid-row dd {
+    line-height: 0.96;
   }
 
   .code-row {
-    min-height: 27px;
+    min-height: 21px;
   }
 
   .code-row dt {
-    font-size: clamp(6px, 1.75vw, 8px);
-    margin-bottom: 1px;
+    font-size: clamp(5px, 1.48vw, 7px);
+    margin-bottom: 0;
     padding-left: 1px;
   }
 
   .code-row dd {
-    font-size: clamp(7px, 2.12vw, 9px);
-    min-height: 18px;
+    font-size: clamp(7px, 1.95vw, 9px);
+    min-height: 14px;
     padding-inline: 1px;
+  }
+
+  .countdown-row {
+    margin-top: 1px;
+    padding-top: 1px;
+    border-top: 1px solid rgba(88, 255, 150, 0.18);
+  }
+
+  .countdown-row dt {
+    color: rgba(153, 255, 190, 0.82);
+  }
+
+  .countdown-row dd {
+    color: #c5ffd8;
+    font-size: clamp(6px, 1.8vw, 8px);
+    text-shadow: 0 0 8px rgba(66, 255, 136, 0.5);
   }
 
   .home-link {
     min-height: 22px;
     padding-inline: 12px;
     font-size: clamp(9px, 2.45vw, 11px);
+  }
+
+  .telemetry-hud {
+    width: min(86vw, 340px);
+  }
+
+  .visitor-telemetry dl {
+    grid-template-columns: 1fr;
+  }
+
+  .world-clock-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .world-clock-row {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) auto;
+    gap: 3px 8px;
+    align-items: baseline;
+  }
+
+  .world-clock-place,
+  .world-clock-country,
+  .world-clock-zone {
+    grid-column: 1;
+  }
+
+  .world-clock-time {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+    align-self: center;
+    margin-top: 0;
   }
 }
 

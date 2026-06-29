@@ -66,6 +66,11 @@
                   <dd id="resetText">Every Tuesday &mdash; 5:00 PM PDT</dd>
                 </div>
 
+                <div class="grid-row grid-row-wide countdown-row">
+                  <dt>COUNTDOWN:</dt>
+                  <dd id="countdownText">--d --h --m --s</dd>
+                </div>
+
                 <div class="grid-row">
                   <dt>REQUIRED:</dt>
                   <dd id="requiredItem">Nuclear Keycard</dd>
@@ -75,11 +80,6 @@
                   <dt>STATUS:</dt>
                   <dd id="statusText">AUTHORIZED</dd>
                 </div>
-
-                <div class="grid-row grid-row-wide countdown-row">
-                  <dt>COUNTDOWN:</dt>
-                  <dd id="countdownText">--d --h --m --s</dd>
-                </div>
               </dl>
             </div>
           </div>
@@ -87,6 +87,35 @@
 
         <footer class="site-footer">WULFZX.UNDERGROUND</footer>
         <a class="home-link" href="https://wzxu.pro">Home</a>
+
+        <section class="telemetry-hud" aria-label="World time telemetry">
+          <div class="visitor-telemetry">
+            <p class="hud-kicker">LOCAL TERMINAL</p>
+            <dl>
+              <div>
+                <dt>ZONE</dt>
+                <dd id="visitorZone">--</dd>
+              </div>
+              <div>
+                <dt>TIME</dt>
+                <dd id="visitorTime">--:--:--</dd>
+              </div>
+              <div>
+                <dt>DATE</dt>
+                <dd id="visitorDate">--</dd>
+              </div>
+              <div>
+                <dt>DAY</dt>
+                <dd id="visitorDayOfYear">---</dd>
+              </div>
+            </dl>
+          </div>
+
+          <div class="world-telemetry">
+            <p class="hud-kicker">GLOBAL RELAY</p>
+            <div class="world-clock-grid" id="worldClockGrid"></div>
+          </div>
+        </section>
       </section>
     </main>
 

@@ -10,6 +10,16 @@ const siloConfig = {
   status: "AUTHORIZED"
 };
 
+const worldClockConfig = [
+  { label: "Los Angeles", country: "USA", timeZone: "America/Los_Angeles" },
+  { label: "New York", country: "USA", timeZone: "America/New_York" },
+  { label: "London", country: "United Kingdom", timeZone: "Europe/London" },
+  { label: "Paris", country: "France", timeZone: "Europe/Paris" },
+  { label: "Dubai", country: "UAE", timeZone: "Asia/Dubai" },
+  { label: "Tokyo", country: "Japan", timeZone: "Asia/Tokyo" },
+  { label: "Sydney", country: "Australia", timeZone: "Australia/Sydney" }
+];
+
 const elements = {
   alphaCode: document.getElementById("alphaCode"),
   bravoCode: document.getElementById("bravoCode"),
@@ -18,8 +28,35 @@ const elements = {
   resetText: document.getElementById("resetText"),
   requiredItem: document.getElementById("requiredItem"),
   statusText: document.getElementById("statusText"),
-  countdownText: document.getElementById("countdownText")
+  countdownText: document.getElementById("countdownText"),
+  visitorZone: document.getElementById("visitorZone"),
+  visitorTime: document.getElementById("visitorTime"),
+  visitorDate: document.getElementById("visitorDate"),
+  visitorDayOfYear: document.getElementById("visitorDayOfYear"),
+  worldClockGrid: document.getElementById("worldClockGrid")
 };
+
+const visitorTimeZone =
+  Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
+
+const timeFormatterCache = new Map();
+
+function getTimeFormatter(timeZone) {
+  if (!timeFormatterCache.has(timeZone)) {
+    timeFormatterCache.set(
+      timeZone,
+      new Intl.DateTimeFormat("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hourCycle: "h23",
+        timeZone
+      })
+    );
+  }
+
+  return timeFormatterCache.get(timeZone);
+}
 
 function formatValidRange(fromValue, toValue) {
   const from = new Date(fromValue);
@@ -52,6 +89,52 @@ function renderConfig() {
   elements.statusText.textContent = siloConfig.status;
 }
 
+function getDayOfYear(date) {
+  const start = Date.UTC(date.getFullYear(), 0, 1);
+  const today = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
+
+  return Math.floor((today - start) / 86400000) + 1;
+}
+
+function renderWorldClockRows() {
+  elements.worldClockGrid.innerHTML = worldClockConfig
+    .map(
+      (clock, index) => `
+        <div class="world-clock-row" data-clock-index="${index}">
+          <span class="world-clock-place">${clock.label}</span>
+          <span class="world-clock-country">${clock.country}</span>
+          <span class="world-clock-zone">${clock.timeZone}</span>
+          <time class="world-clock-time" data-world-time="${index}">--:--:--</time>
+        </div>
+      `
+    )
+    .join("");
+}
+
+function updateTelemetry() {
+  const now = new Date();
+  const localDateFormatter = new Intl.DateTimeFormat("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    year: "numeric"
+  });
+
+  elements.visitorZone.textContent = visitorTimeZone;
+  elements.visitorTime.textContent = getTimeFormatter(visitorTimeZone).format(now);
+  elements.visitorDate.textContent = localDateFormatter.format(now);
+  elements.visitorDayOfYear.textContent = `${getDayOfYear(now)} / ${now.getFullYear()}`;
+
+  worldClockConfig.forEach((clock, index) => {
+    const timeElement = document.querySelector(`[data-world-time="${index}"]`);
+
+    if (timeElement) {
+      timeElement.textContent = getTimeFormatter(clock.timeZone).format(now);
+      timeElement.dateTime = now.toISOString();
+    }
+  });
+}
+
 function updateCountdown() {
   const target = new Date(siloConfig.validTo).getTime();
   const remaining = target - Date.now();
@@ -71,5 +154,8 @@ function updateCountdown() {
 }
 
 renderConfig();
+renderWorldClockRows();
 updateCountdown();
+updateTelemetry();
 window.setInterval(updateCountdown, 1000);
+window.setInterval(updateTelemetry, 1000);
