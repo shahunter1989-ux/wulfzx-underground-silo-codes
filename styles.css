@@ -27,6 +27,7 @@ body {
 }
 
 body {
+  position: relative;
   margin: 0;
   overflow-x: hidden;
   background:
@@ -35,6 +36,41 @@ body {
     linear-gradient(180deg, #070908 0%, var(--page-bg) 56%, #010201 100%);
   color: var(--terminal-green);
   font-family: "Share Tech Mono", "Courier New", monospace;
+}
+
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+}
+
+body::before {
+  background:
+    linear-gradient(rgba(89, 255, 145, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(89, 255, 145, 0.018) 1px, transparent 1px);
+  background-size: 100% 9px, 34px 100%;
+  opacity: 0.24;
+  animation: pageGridDrift 18s linear infinite;
+}
+
+body::after {
+  background:
+    linear-gradient(
+      115deg,
+      transparent 0%,
+      transparent 42%,
+      rgba(99, 255, 158, 0.035) 49%,
+      rgba(185, 255, 211, 0.055) 50%,
+      rgba(99, 255, 158, 0.028) 51%,
+      transparent 58%,
+      transparent 100%
+    );
+  opacity: 0.62;
+  transform: translateX(-55%);
+  animation: pageSignalSweep 12s ease-in-out infinite;
 }
 
 button {
@@ -86,6 +122,7 @@ a {
   opacity: 0.82;
   z-index: -1;
   pointer-events: none;
+  animation: ambientBreathe 9s ease-in-out infinite;
 }
 
 .pipboy-frame {
@@ -455,6 +492,70 @@ a {
   }
 }
 
+@keyframes ambientBreathe {
+  0%,
+  100% {
+    opacity: 0.68;
+    transform: translateX(50%) scale(0.96);
+  }
+
+  50% {
+    opacity: 0.96;
+    transform: translateX(50%) scale(1.05);
+  }
+}
+
+@keyframes pageGridDrift {
+  from {
+    background-position: 0 0, 0 0;
+  }
+
+  to {
+    background-position: 0 36px, 34px 0;
+  }
+}
+
+@keyframes pageSignalSweep {
+  0%,
+  18% {
+    transform: translateX(-58%);
+    opacity: 0;
+  }
+
+  36%,
+  64% {
+    opacity: 0.62;
+  }
+
+  82%,
+  100% {
+    transform: translateX(58%);
+    opacity: 0;
+  }
+}
+
+@keyframes telemetryRefresh {
+  0%,
+  26% {
+    transform: translateY(-120%);
+    opacity: 0;
+  }
+
+  40% {
+    opacity: 0.48;
+  }
+
+  62% {
+    transform: translateY(220%);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(220%);
+    opacity: 0;
+  }
+}
+
 @keyframes telemetryPulse {
   0%,
   100% {
@@ -568,6 +669,29 @@ a {
     telemetryScan 5.5s linear infinite;
 }
 
+.visitor-telemetry::after,
+.world-telemetry::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba(137, 255, 181, 0.07) 48%,
+    rgba(230, 255, 238, 0.11) 50%,
+    rgba(137, 255, 181, 0.045) 52%,
+    transparent
+  );
+  opacity: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  animation: telemetryRefresh 8.5s ease-in-out infinite;
+}
+
+.world-telemetry::after {
+  animation-delay: 2.2s;
+}
+
 .visitor-telemetry {
   padding: clamp(8px, 1vw, 12px);
 }
@@ -627,6 +751,18 @@ a {
   background: rgba(18, 255, 102, 0.035);
 }
 
+.world-clock-row:nth-child(2n) .world-clock-time {
+  animation-delay: 0.8s;
+}
+
+.world-clock-row:nth-child(3n) .world-clock-time {
+  animation-delay: 1.6s;
+}
+
+.world-clock-row:nth-child(4n) .world-clock-time {
+  animation-delay: 2.4s;
+}
+
 .world-clock-place,
 .world-clock-time {
   display: block;
@@ -682,6 +818,19 @@ a {
 
   .page-shell {
     padding: 10px 12px 46px;
+  }
+
+  body::before {
+    opacity: 0.34;
+    background-size: 100% 8px, 28px 100%;
+  }
+
+  body::after {
+    opacity: 0.78;
+  }
+
+  .ambient-glow {
+    opacity: 0.92;
   }
 
   .pipboy-stage {
@@ -917,11 +1066,16 @@ a {
   .screen-overlay::before,
   .screen-overlay::after,
   .screen-crt,
+  body::before,
+  body::after,
+  .ambient-glow,
   .code-row::after,
   .code-row dd,
   .terminal-content,
   .visitor-telemetry,
+  .visitor-telemetry::after,
   .world-telemetry,
+  .world-telemetry::after,
   .visitor-node,
   .world-clock-row,
   .world-clock-time {
