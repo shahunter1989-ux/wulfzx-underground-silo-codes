@@ -686,8 +686,9 @@ a {
 
   .pipboy-stage {
     position: relative;
-    min-height: 760px;
-    transform: translateY(-4%);
+    min-height: 0;
+    gap: 8px;
+    transform: none;
   }
 
   .pipboy-frame {
@@ -703,41 +704,45 @@ a {
   }
 
   .telemetry-hud {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    display: block;
-    margin-top: 0;
-    transform: none;
-    pointer-events: none;
+    position: static;
+    width: min(78vw, 360px);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 7px;
+    margin-top: 2px;
+    transform: translateX(-6%);
   }
 
   .visitor-telemetry,
   .world-telemetry {
-    display: contents;
+    display: block;
+    padding: 7px;
   }
 
   .hud-kicker {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0 0 5px;
+    overflow: visible;
+    clip: auto;
+    font-size: clamp(7px, 1.8vw, 9px);
   }
 
-  .visitor-telemetry dl,
-  .world-clock-grid {
-    display: contents;
+  .visitor-telemetry dl {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 5px;
+    margin: 0;
   }
 
   .visitor-node,
   .world-clock-row {
-    position: absolute;
-    z-index: 2;
-    width: min(31vw, 122px);
+    position: relative;
+    z-index: auto;
+    width: auto;
     min-width: 0;
-    padding: 5px 6px;
+    padding: 5px;
     overflow: hidden;
     border: 1px solid rgba(80, 255, 145, 0.2);
     border-radius: 3px;
@@ -759,15 +764,19 @@ a {
       telemetryScan 5.5s linear infinite;
   }
 
+  .visitor-node {
+    text-align: left;
+  }
+
   .visitor-node dt,
   .world-clock-country,
   .world-clock-zone {
-    font-size: clamp(5px, 1.42vw, 7px);
+    font-size: clamp(5px, 1.35vw, 7px);
   }
 
   .visitor-node dd,
   .world-clock-place {
-    font-size: clamp(7px, 1.86vw, 9px);
+    font-size: clamp(5px, 1.55vw, 8px);
   }
 
   .visitor-node dd,
@@ -775,80 +784,35 @@ a {
     margin-top: 2px;
   }
 
+  .world-clock-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 5px;
+  }
+
+  .world-clock-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 2px 5px;
+    align-items: baseline;
+  }
+
+  .world-clock-place,
+  .world-clock-country,
+  .world-clock-zone {
+    grid-column: 1;
+  }
+
   .world-clock-time {
-    font-size: clamp(8px, 2.1vw, 10px);
-  }
-
-  .visitor-node-zone {
-    top: 24px;
-    left: 7vw;
-  }
-
-  .visitor-node-time {
-    top: 24px;
-    right: auto;
-    left: 43vw;
-    text-align: right;
-  }
-
-  .visitor-node-date {
-    top: 286px;
-    left: 6vw;
-  }
-
-  .visitor-node-day {
-    top: 286px;
-    right: auto;
-    left: 43vw;
-    text-align: right;
-  }
-
-  .world-clock-primary:nth-child(1) {
-    top: 350px;
-    left: 6vw;
-  }
-
-  .world-clock-primary:nth-child(2) {
-    top: 350px;
-    right: auto;
-    left: 43vw;
-    text-align: right;
-  }
-
-  .world-clock-primary:nth-child(3) {
-    top: 420px;
-    left: 6vw;
-  }
-
-  .world-clock-primary:nth-child(6) {
-    top: 420px;
-    right: auto;
-    left: 43vw;
-    text-align: right;
-  }
-
-  .world-clock-secondary {
-    top: 506px;
-    width: min(27vw, 106px);
-    text-align: center;
-  }
-
-  .world-clock-secondary:nth-child(4) {
-    left: 7vw;
-  }
-
-  .world-clock-secondary:nth-child(5) {
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  .world-clock-secondary:nth-child(7) {
-    right: auto;
-    left: 60vw;
+    grid-column: 2;
+    grid-row: 1 / span 3;
+    align-self: center;
+    margin-top: 0;
+    font-size: clamp(7px, 1.85vw, 10px);
   }
 
   .site-footer {
-    margin-top: 286px;
+    margin-top: 2px;
   }
 }
 
@@ -927,12 +891,15 @@ a {
 
   .visitor-node,
   .world-clock-row {
-    width: min(30vw, 112px);
     padding: 4px 5px;
   }
 
-  .world-clock-secondary {
-    width: min(26vw, 96px);
+  .visitor-telemetry dl {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .world-clock-grid {
+    grid-template-columns: 1fr;
   }
 }
 
