@@ -1,14 +1,15 @@
 // Weekly silo code config. Update this block when the codes rotate.
 const siloConfig = {
-  alpha: "48880142",
-  bravo: "20284491",
-  charlie: "38280383",
-  validFrom: "2026-06-24T17:00:00-07:00",
-  validTo: "2026-07-01T17:00:00-07:00",
-  resetText: "Every Tuesday \u2014 5:00 PM PDT",
+  alpha: "31780265",
+  bravo: "37559184",
+  charlie: "86815399",
+  validFrom: "2026-07-01T17:00:00-07:00",
+  validTo: "2026-07-08T17:00:00-07:00",
   requiredItem: "Nuclear Keycard",
   status: "AUTHORIZED"
 };
+
+let activeSiloConfig = { ...siloConfig };
 
 const worldClockConfig = [
   { label: "Los Angeles", country: "USA", timeZone: "America/Los_Angeles" },
@@ -76,17 +77,74 @@ function formatValidRange(fromValue, toValue) {
   return `${dateFormatter.format(from)} \u2013 ${endFormatter.format(to)}`;
 }
 
-function renderConfig() {
-  elements.alphaCode.textContent = siloConfig.alpha;
-  elements.bravoCode.textContent = siloConfig.bravo;
-  elements.charlieCode.textContent = siloConfig.charlie;
-  elements.validRange.textContent = formatValidRange(
-    siloConfig.validFrom,
-    siloConfig.validTo
+function formatResetText(toValue) {
+  const reset = new Date(toValue);
+  const resetFormatter = new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    timeZone: "America/Los_Angeles",
+    timeZoneName: "short"
+  });
+
+  return `Next reset \u2014 ${resetFormatter.format(reset)}`;
+}
+
+function isValidSiloConfig(config) {
+  return (
+    config &&
+    /^\d{8}$/.test(config.alpha) &&
+    /^\d{8}$/.test(config.bravo) &&
+    /^\d{8}$/.test(config.charlie) &&
+    !Number.isNaN(new Date(config.validFrom).getTime()) &&
+    !Number.isNaN(new Date(config.validTo).getTime())
   );
-  elements.resetText.textContent = siloConfig.resetText;
-  elements.requiredItem.textContent = siloConfig.requiredItem;
-  elements.statusText.textContent = siloConfig.status;
+}
+
+function renderConfig(config = activeSiloConfig) {
+  elements.alphaCode.textContent = config.alpha;
+  elements.bravoCode.textContent = config.bravo;
+  elements.charlieCode.textContent = config.charlie;
+  elements.validRange.textContent = formatValidRange(
+    config.validFrom,
+    config.validTo
+  );
+  elements.resetText.textContent = formatResetText(config.validTo);
+  elements.requiredItem.textContent = config.requiredItem || siloConfig.requiredItem;
+  elements.statusText.textContent = config.status || siloConfig.status;
+}
+
+async function loadSiloConfig() {
+  if (window.location.protocol === "file:") {
+    return;
+  }
+
+  try {
+    const response = await fetch(`data/silo-codes.json?v=${Date.now()}`, {
+      cache: "no-store"
+    });
+
+    if (!response.ok) {
+      throw new Error(`Silo code data returned ${response.status}`);
+    }
+
+    const remoteConfig = await response.json();
+
+    if (!isValidSiloConfig(remoteConfig)) {
+      throw new Error("Silo code data is invalid.");
+    }
+
+    activeSiloConfig = {
+      ...siloConfig,
+      ...remoteConfig
+    };
+    renderConfig();
+    updateCountdown();
+  } catch (error) {
+    console.warn("Using fallback silo code config.", error);
+  }
 }
 
 function getDayOfYear(date) {
@@ -142,7 +200,7 @@ function updateTelemetry() {
 }
 
 function updateCountdown() {
-  const target = new Date(siloConfig.validTo).getTime();
+  const target = new Date(activeSiloConfig.validTo).getTime();
   const remaining = target - Date.now();
 
   if (remaining <= 0) {
@@ -163,5 +221,6 @@ renderConfig();
 renderWorldClockRows();
 updateCountdown();
 updateTelemetry();
+loadSiloConfig();
 window.setInterval(updateCountdown, 1000);
 window.setInterval(updateTelemetry, 1000);

@@ -1,0 +1,31 @@
+name: Update Silo Codes
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */6 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  update-silo-codes:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Fetch latest silo codes
+        run: node scripts/update-silo-codes.mjs
+
+      - name: Commit updated silo codes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Update Fallout 76 silo codes"
+          file_pattern: data/silo-codes.json

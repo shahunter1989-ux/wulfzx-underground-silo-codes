@@ -1,0 +1,11 @@
+{
+  "alpha": "31780265",
+  "bravo": "37559184",
+  "charlie": "86815399",
+  "validFrom": "2026-07-01T17:00:00-07:00",
+  "validTo": "2026-07-08T17:00:00-07:00",
+  "requiredItem": "Nuclear Keycard",
+  "status": "AUTHORIZED",
+  "source": "https://nukacrypt.com/api/codes",
+  "lastUpdated": "2026-07-02T02:58:43.148Z"
+}
