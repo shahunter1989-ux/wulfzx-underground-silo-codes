@@ -1,10 +1,10 @@
 // Weekly silo code config. Update this block when the codes rotate.
 const siloConfig = {
-  alpha: "80305790",
-  bravo: "90690965",
-  charlie: "99101593",
-  validFrom: "2026-07-15T17:00:00-07:00",
-  validTo: "2026-07-22T17:00:00-07:00",
+  alpha: "34014750",
+  bravo: "70792083",
+  charlie: "27323149",
+  validFrom: "2026-07-22T17:00:00-07:00",
+  validTo: "2026-07-29T17:00:00-07:00",
   requiredItem: "Nuclear Keycard",
   status: "AUTHORIZED"
 };
