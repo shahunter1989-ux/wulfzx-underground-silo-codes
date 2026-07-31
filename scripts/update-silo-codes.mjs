@@ -1,9 +1,10 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rename, rm, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
-const SOURCE_URL = "https://nukacrypt.com/api/codes";
-const outputPath = resolve(
+export const NUKACRYPT_URL = "https://nukacrypt.com/api/codes";
+export const FO76SILO_URL = "https://fo76silo.com/nuke-codes.json";
+export const defaultOutputPath = resolve(
   dirname(fileURLToPath(import.meta.url)),
   "../data/silo-codes.json"
 );
@@ -14,13 +15,14 @@ function assertEightDigitCode(label, value) {
   }
 }
 
-function toPacificIso(utcValue) {
-  const date = new Date(utcValue);
+function validDate(value, label) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) throw new Error(`${label} is invalid: ${value}`);
+  return date;
+}
 
-  if (Number.isNaN(date.getTime())) {
-    throw new Error(`Invalid source date: ${utcValue}`);
-  }
-
+export function toPacificIso(utcValue) {
+  const date = validDate(utcValue, "Source date");
   const pacificParts = new Intl.DateTimeFormat("en-US", {
     timeZone: "America/Los_Angeles",
     year: "numeric",
@@ -32,34 +34,23 @@ function toPacificIso(utcValue) {
     hourCycle: "h23",
     timeZoneName: "shortOffset"
   }).formatToParts(date);
-
-  const partMap = Object.fromEntries(
-    pacificParts.map((part) => [part.type, part.value])
-  );
-  const offset = partMap.timeZoneName.replace("GMT", "");
-  const offsetMatch = offset.match(/^([+-])(\d{1,2})(?::(\d{2}))?$/);
-
-  if (!offsetMatch) {
-    throw new Error(`Unsupported time zone offset: ${partMap.timeZoneName}`);
-  }
-
-  const normalizedOffset = `${offsetMatch[1]}${offsetMatch[2].padStart(2, "0")}:${offsetMatch[3] || "00"}`;
-
-  return `${partMap.year}-${partMap.month}-${partMap.day}T${partMap.hour}:${partMap.minute}:${partMap.second}${normalizedOffset}`;
+  const partMap = Object.fromEntries(pacificParts.map((part) => [part.type, part.value]));
+  const offsetMatch = partMap.timeZoneName.replace("GMT", "").match(/^([+-])(\d{1,2})(?::(\d{2}))?$/);
+  if (!offsetMatch) throw new Error(`Unsupported time zone offset: ${partMap.timeZoneName}`);
+  const offset = `${offsetMatch[1]}${offsetMatch[2].padStart(2, "0")}:${offsetMatch[3] || "00"}`;
+  return `${partMap.year}-${partMap.month}-${partMap.day}T${partMap.hour}:${partMap.minute}:${partMap.second}${offset}`;
 }
 
-function buildConfig(sourceData) {
-  const alpha = sourceData.ALPHA;
-  const bravo = sourceData.BRAVO;
-  const charlie = sourceData.CHARLIE;
-
+export function buildNukaCryptConfig(sourceData, now = new Date()) {
+  const alpha = sourceData?.ALPHA;
+  const bravo = sourceData?.BRAVO;
+  const charlie = sourceData?.CHARLIE;
   assertEightDigitCode("Alpha", alpha);
   assertEightDigitCode("Bravo", bravo);
   assertEightDigitCode("Charlie", charlie);
-
-  const validFromDate = new Date(sourceData.date);
+  const validFromDate = validDate(sourceData.date, "NukaCrypt date");
   const validToDate = new Date(validFromDate.getTime() + 7 * 86400000);
-
+  if (validToDate <= validFromDate) throw new Error("Invalid NukaCrypt validity window.");
   return {
     alpha,
     bravo,
@@ -68,12 +59,84 @@ function buildConfig(sourceData) {
     validTo: toPacificIso(validToDate.toISOString()),
     requiredItem: "Nuclear Keycard",
     status: "AUTHORIZED",
-    source: SOURCE_URL,
-    lastUpdated: new Date().toISOString()
+    source: NUKACRYPT_URL,
+    lastUpdated: now.toISOString(),
+    verification: "single-source",
+    verifiedAt: null,
+    sources: [NUKACRYPT_URL]
   };
 }
 
-async function readExistingConfig() {
+export function normalizeFo76Silo(sourceData) {
+  const alpha = sourceData?.codes?.alpha;
+  const bravo = sourceData?.codes?.bravo;
+  const charlie = sourceData?.codes?.charlie;
+  assertEightDigitCode("FO76Silo Alpha", alpha);
+  assertEightDigitCode("FO76Silo Bravo", bravo);
+  assertEightDigitCode("FO76Silo Charlie", charlie);
+  const validFrom = validDate(sourceData.sinceIso, "FO76Silo sinceIso").toISOString();
+  const validTo = validDate(sourceData.nextResetIso, "FO76Silo nextResetIso").toISOString();
+  if (Date.parse(validTo) <= Date.parse(validFrom)) throw new Error("Invalid FO76Silo validity window.");
+  return { alpha, bravo, charlie, validFrom, validTo };
+}
+
+function sameCodes(left, right) {
+  return ["alpha", "bravo", "charlie"].every((key) => left[key] === right[key]);
+}
+
+function sameWindow(left, right) {
+  return Date.parse(left.validFrom) === Date.parse(right.validFrom) &&
+    Date.parse(left.validTo) === Date.parse(right.validTo);
+}
+
+export function crossCheckConfig(config, fo76Data, now = new Date()) {
+  const comparison = normalizeFo76Silo(fo76Data);
+  if (sameWindow(config, comparison) && !sameCodes(config, comparison)) {
+    throw new Error("FO76Silo and NukaCrypt disagree for the same active window; refusing to overwrite verified data.");
+  }
+  if (sameWindow(config, comparison) && sameCodes(config, comparison)) {
+    return {
+      ...config,
+      verification: "dual-source",
+      verifiedAt: now.toISOString(),
+      sources: [NUKACRYPT_URL, FO76SILO_URL]
+    };
+  }
+  return config;
+}
+
+export async function fetchJsonWithRetry(url, { fetchImpl = fetch, attempts = 2, timeoutMs = 8000 } = {}) {
+  let lastError;
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(new Error("Request timed out.")), timeoutMs);
+    try {
+      const response = await fetchImpl(url, {
+        headers: {
+          Accept: url === NUKACRYPT_URL ? "*/*" : "application/json",
+          "User-Agent": "WulfzxUndergroundSiloCodes/2.0"
+        },
+        signal: controller.signal
+      });
+      if (!response.ok) throw new Error(`${url} returned ${response.status}`);
+      return await response.json();
+    } catch (error) {
+      lastError = error;
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+  throw lastError || new Error(`${url} failed`);
+}
+
+export function hasMeaningfulChange(currentConfig, nextConfig) {
+  if (!currentConfig) return true;
+  return ["alpha", "bravo", "charlie", "validFrom", "validTo", "verification"].some(
+    (key) => currentConfig[key] !== nextConfig[key]
+  );
+}
+
+async function readExistingConfig(outputPath) {
   try {
     return JSON.parse(await readFile(outputPath, "utf8"));
   } catch {
@@ -81,45 +144,50 @@ async function readExistingConfig() {
   }
 }
 
-function hasCodeChange(currentConfig, nextConfig) {
-  if (!currentConfig) {
-    return true;
-  }
-
-  return ["alpha", "bravo", "charlie", "validFrom", "validTo"].some(
-    (key) => currentConfig[key] !== nextConfig[key]
-  );
-}
-
-async function main() {
-  const response = await fetch(SOURCE_URL, {
-    headers: {
-      Accept: "*/*",
-      "User-Agent": "WulfzxUndergroundSiloCodes/1.0"
-    }
-  });
-
-  if (!response.ok) {
-    throw new Error(`NukaCrypt request failed: ${response.status}`);
-  }
-
-  const sourceData = await response.json();
-  const nextConfig = buildConfig(sourceData);
-  const currentConfig = await readExistingConfig();
-
-  if (!hasCodeChange(currentConfig, nextConfig)) {
-    console.log("Silo codes are already current.");
-    return;
-  }
-
+async function writeAtomically(outputPath, config) {
   await mkdir(dirname(outputPath), { recursive: true });
-  await writeFile(outputPath, `${JSON.stringify(nextConfig, null, 2)}\n`);
-  console.log(
-    `Updated silo codes: Alpha ${nextConfig.alpha}, Bravo ${nextConfig.bravo}, Charlie ${nextConfig.charlie}`
-  );
+  const temporaryPath = `${outputPath}.tmp`;
+  try {
+    await writeFile(temporaryPath, `${JSON.stringify(config, null, 2)}\n`);
+    await rename(temporaryPath, outputPath);
+  } finally {
+    await rm(temporaryPath, { force: true });
+  }
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exit(1);
-});
+export async function updateSiloCodes({
+  fetchImpl = fetch,
+  outputPath = defaultOutputPath,
+  now = new Date()
+} = {}) {
+  const nukaData = await fetchJsonWithRetry(NUKACRYPT_URL, { fetchImpl });
+  let nextConfig = buildNukaCryptConfig(nukaData, now);
+  try {
+    const fo76Data = await fetchJsonWithRetry(FO76SILO_URL, { fetchImpl });
+    nextConfig = crossCheckConfig(nextConfig, fo76Data, now);
+  } catch (error) {
+    if (String(error?.message).includes("disagree")) throw error;
+    console.warn(`FO76Silo cross-check unavailable; retaining NukaCrypt update. ${error?.message || error}`);
+  }
+
+  const currentConfig = await readExistingConfig(outputPath);
+  if (!hasMeaningfulChange(currentConfig, nextConfig)) {
+    return { changed: false, config: currentConfig };
+  }
+  await writeAtomically(outputPath, nextConfig);
+  return { changed: true, config: nextConfig };
+}
+
+export async function main() {
+  const result = await updateSiloCodes();
+  console.log(result.changed
+    ? `Updated silo codes: Alpha ${result.config.alpha}, Bravo ${result.config.bravo}, Charlie ${result.config.charlie} (${result.config.verification})`
+    : "Silo codes are already current.");
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+  });
+}

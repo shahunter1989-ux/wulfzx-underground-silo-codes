@@ -360,6 +360,69 @@ a {
   animation: codeGlow 4.8s ease-in-out infinite;
 }
 
+.code-copy {
+  width: 100%;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-size: inherit;
+  letter-spacing: 0.03em;
+  text-shadow: inherit;
+}
+
+.code-copy:focus-visible {
+  outline: 1px solid rgba(174, 255, 202, 0.9);
+  outline-offset: 2px;
+}
+
+.code-copy:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
+.source-warning,
+.source-health {
+  width: min(94vw, 1040px);
+  margin: 0;
+  font-size: clamp(8px, 0.84vw, 11px);
+  line-height: 1.25;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.source-warning {
+  padding: 6px 10px;
+  border: 1px solid rgba(255, 190, 73, 0.55);
+  background: rgba(66, 38, 4, 0.5);
+  color: #ffd88a;
+}
+
+.source-health {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+.source-health:empty {
+  display: none;
+}
+
+.source-health a {
+  padding: 5px 8px;
+  border: 1px solid rgba(80, 255, 145, 0.24);
+  background: rgba(2, 22, 10, 0.62);
+  color: rgba(169, 255, 199, 0.84);
+}
+
+.source-health a:hover,
+.source-health a:focus-visible {
+  border-color: rgba(128, 255, 173, 0.72);
+  color: var(--terminal-green);
+}
+
 .grid-row {
   grid-column: span 3;
   display: grid;

@@ -48,17 +48,17 @@
 
                 <div class="code-row">
                   <dt>SITE ALPHA</dt>
-                  <dd id="alphaCode">48880142</dd>
+                  <dd><button id="alphaCode" class="code-copy" data-silo="ALPHA" type="button" disabled>89778792</button></dd>
                 </div>
 
                 <div class="code-row">
                   <dt>SITE BRAVO</dt>
-                  <dd id="bravoCode">20284491</dd>
+                  <dd><button id="bravoCode" class="code-copy" data-silo="BRAVO" type="button" disabled>30910055</button></dd>
                 </div>
 
                 <div class="code-row">
                   <dt>SITE CHARLIE</dt>
-                  <dd id="charlieCode">38280383</dd>
+                  <dd><button id="charlieCode" class="code-copy" data-silo="CHARLIE" type="button" disabled>70360840</button></dd>
                 </div>
 
                 <div class="grid-row">
@@ -84,6 +84,9 @@
             </div>
           </div>
         </div>
+
+        <p id="sourceWarning" class="source-warning" role="status" hidden></p>
+        <nav id="sourceHealth" class="source-health" aria-label="Silo code source health"></nav>
 
         <section class="telemetry-hud" aria-label="World time telemetry">
           <div class="visitor-telemetry">
@@ -119,6 +122,6 @@
       </section>
     </main>
 
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
   </body>
 </html>

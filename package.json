@@ -1,0 +1,8 @@
+{
+  "name": "wulfzx-underground-silo-codes",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  }
+}

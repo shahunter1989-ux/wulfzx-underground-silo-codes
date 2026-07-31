@@ -3,7 +3,7 @@ name: Update Silo Codes
 on:
   workflow_dispatch:
   schedule:
-    - cron: "17 */6 * * *"
+    - cron: "17 * * * *"
 
 permissions:
   contents: write
@@ -20,6 +20,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+
+      - name: Test silo resolver and updater
+        run: npm test
 
       - name: Fetch latest silo codes
         run: node scripts/update-silo-codes.mjs

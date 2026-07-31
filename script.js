@@ -1,15 +1,17 @@
-// Weekly silo code config. Update this block when the codes rotate.
-const siloConfig = {
-  alpha: "34014750",
-  bravo: "70792083",
-  charlie: "27323149",
-  validFrom: "2026-07-22T17:00:00-07:00",
-  validTo: "2026-07-29T17:00:00-07:00",
-  requiredItem: "Nuclear Keycard",
-  status: "AUTHORIZED"
-};
+import {
+  BUNDLED_CONFIG,
+  fetchSourceSnapshot,
+  readLastVerified,
+  resolveSources,
+  writeLastVerified
+} from "./silo-data.js";
 
-let activeSiloConfig = { ...siloConfig };
+let activeResolution = {
+  config: BUNDLED_CONFIG,
+  status: "SYNCING",
+  canCopy: false,
+  sourceStates: []
+};
 
 const worldClockConfig = [
   { label: "Los Angeles", country: "USA", timeZone: "America/Los_Angeles" },
@@ -30,6 +32,8 @@ const elements = {
   requiredItem: document.getElementById("requiredItem"),
   statusText: document.getElementById("statusText"),
   countdownText: document.getElementById("countdownText"),
+  sourceWarning: document.getElementById("sourceWarning"),
+  sourceHealth: document.getElementById("sourceHealth"),
   visitorZone: document.getElementById("visitorZone"),
   visitorTime: document.getElementById("visitorTime"),
   visitorDate: document.getElementById("visitorDate"),
@@ -37,31 +41,23 @@ const elements = {
   worldClockGrid: document.getElementById("worldClockGrid")
 };
 
-const visitorTimeZone =
-  Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
-
+const visitorTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
 const timeFormatterCache = new Map();
 
 function getTimeFormatter(timeZone) {
   if (!timeFormatterCache.has(timeZone)) {
-    timeFormatterCache.set(
-      timeZone,
-      new Intl.DateTimeFormat("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hourCycle: "h23",
-        timeZone
-      })
-    );
+    timeFormatterCache.set(timeZone, new Intl.DateTimeFormat("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hourCycle: "h23",
+      timeZone
+    }));
   }
-
   return timeFormatterCache.get(timeZone);
 }
 
 function formatValidRange(fromValue, toValue) {
-  const from = new Date(fromValue);
-  const to = new Date(toValue);
   const dateFormatter = new Intl.DateTimeFormat("en-US", {
     month: "short",
     day: "numeric",
@@ -73,13 +69,11 @@ function formatValidRange(fromValue, toValue) {
     year: "numeric",
     timeZone: "America/Los_Angeles"
   });
-
-  return `${dateFormatter.format(from)} \u2013 ${endFormatter.format(to)}`;
+  return `${dateFormatter.format(new Date(fromValue))} – ${endFormatter.format(new Date(toValue))}`;
 }
 
 function formatResetText(toValue) {
-  const reset = new Date(toValue);
-  const resetFormatter = new Intl.DateTimeFormat("en-US", {
+  return `Next reset — ${new Intl.DateTimeFormat("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",
@@ -87,92 +81,91 @@ function formatResetText(toValue) {
     minute: "2-digit",
     timeZone: "America/Los_Angeles",
     timeZoneName: "short"
-  });
-
-  return `Next reset \u2014 ${resetFormatter.format(reset)}`;
+  }).format(new Date(toValue))}`;
 }
 
-function isValidSiloConfig(config) {
-  return (
-    config &&
-    /^\d{8}$/.test(config.alpha) &&
-    /^\d{8}$/.test(config.bravo) &&
-    /^\d{8}$/.test(config.charlie) &&
-    !Number.isNaN(new Date(config.validFrom).getTime()) &&
-    !Number.isNaN(new Date(config.validTo).getTime())
-  );
+function warningFor(status) {
+  if (status === "LIVE") return "Single current source — awaiting independent confirmation.";
+  if (status === "CONFLICT") return "Source conflict — last agreed codes shown; copying disabled.";
+  if (status === "FALLBACK") return "Both sources unavailable — cached or bundled codes shown; copying disabled.";
+  if (status === "EXPIRED") return "Code window expired — wait for a current source before launching.";
+  return "";
 }
 
-function renderConfig(config = activeSiloConfig) {
+function renderSourceHealth(states) {
+  elements.sourceHealth.replaceChildren(...states.map((source) => {
+    const link = document.createElement("a");
+    link.href = source.href;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = `${source.label} · ${source.status}${source.lastUpdated ? ` · ${new Date(source.lastUpdated).toLocaleString()}` : ""}`;
+    if (source.message) link.title = source.message;
+    return link;
+  }));
+}
+
+function renderResolution(resolution = activeResolution) {
+  const { config, status, canCopy, sourceStates } = resolution;
   elements.alphaCode.textContent = config.alpha;
   elements.bravoCode.textContent = config.bravo;
   elements.charlieCode.textContent = config.charlie;
-  elements.validRange.textContent = formatValidRange(
-    config.validFrom,
-    config.validTo
-  );
+  elements.validRange.textContent = formatValidRange(config.validFrom, config.validTo);
   elements.resetText.textContent = formatResetText(config.validTo);
-  elements.requiredItem.textContent = config.requiredItem || siloConfig.requiredItem;
-  elements.statusText.textContent = config.status || siloConfig.status;
+  elements.requiredItem.textContent = "One Nuclear Keycard";
+  elements.statusText.textContent = status;
+  [elements.alphaCode, elements.bravoCode, elements.charlieCode].forEach((button) => {
+    button.disabled = !canCopy;
+  });
+  const warning = warningFor(status);
+  elements.sourceWarning.hidden = !warning;
+  elements.sourceWarning.textContent = warning;
+  renderSourceHealth(sourceStates);
 }
 
-async function loadSiloConfig() {
-  if (window.location.protocol === "file:") {
-    return;
-  }
-
+async function refreshSiloCodes() {
+  if (window.location.protocol === "file:") return;
   try {
-    const response = await fetch(`data/silo-codes.json?v=${Date.now()}`, {
-      cache: "no-store"
-    });
-
-    if (!response.ok) {
-      throw new Error(`Silo code data returned ${response.status}`);
-    }
-
-    const remoteConfig = await response.json();
-
-    if (!isValidSiloConfig(remoteConfig)) {
-      throw new Error("Silo code data is invalid.");
-    }
-
-    activeSiloConfig = {
-      ...siloConfig,
-      ...remoteConfig
-    };
-    renderConfig();
-    updateCountdown();
+    const snapshot = await fetchSourceSnapshot();
+    activeResolution = resolveSources(snapshot, readLastVerified());
+    if (activeResolution.status === "VERIFIED") writeLastVerified(activeResolution.config);
   } catch (error) {
-    console.warn("Using fallback silo code config.", error);
+    activeResolution = resolveSources({ candidates: [], sourceStates: [] }, readLastVerified());
+    console.warn("Silo synchronization failed.", error);
+  }
+  renderResolution();
+  updateCountdown();
+}
+
+async function copyCode(event) {
+  const button = event.currentTarget;
+  if (button.disabled || !activeResolution.canCopy) return;
+  try {
+    await navigator.clipboard.writeText(button.textContent);
+    const original = elements.statusText.textContent;
+    elements.statusText.textContent = `${button.dataset.silo} COPIED`;
+    window.setTimeout(() => {
+      elements.statusText.textContent = original;
+    }, 1200);
+  } catch {
+    elements.statusText.textContent = "COPY FAILED";
   }
 }
 
 function getDayOfYear(date) {
   const start = Date.UTC(date.getFullYear(), 0, 1);
   const today = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
-
   return Math.floor((today - start) / 86400000) + 1;
 }
 
 function renderWorldClockRows() {
-  elements.worldClockGrid.innerHTML = worldClockConfig
-    .map(
-      (clock, index) => {
-        const clockPriority = [0, 1, 2, 5].includes(index)
-          ? "world-clock-primary"
-          : "world-clock-secondary";
-
-        return `
-        <div class="world-clock-row ${clockPriority}" data-clock-index="${index}">
-          <span class="world-clock-place">${clock.label}</span>
-          <span class="world-clock-country">${clock.country}</span>
-          <span class="world-clock-zone">${clock.timeZone}</span>
-          <time class="world-clock-time" data-world-time="${index}">--:--:--</time>
-        </div>
-      `;
-      }
-    )
-    .join("");
+  elements.worldClockGrid.innerHTML = worldClockConfig.map((clock, index) => `
+    <div class="world-clock-row ${[0, 1, 2, 5].includes(index) ? "world-clock-primary" : "world-clock-secondary"}" data-clock-index="${index}">
+      <span class="world-clock-place">${clock.label}</span>
+      <span class="world-clock-country">${clock.country}</span>
+      <span class="world-clock-zone">${clock.timeZone}</span>
+      <time class="world-clock-time" data-world-time="${index}">--:--:--</time>
+    </div>
+  `).join("");
 }
 
 function updateTelemetry() {
@@ -183,15 +176,12 @@ function updateTelemetry() {
     day: "numeric",
     year: "numeric"
   });
-
   elements.visitorZone.textContent = visitorTimeZone;
   elements.visitorTime.textContent = getTimeFormatter(visitorTimeZone).format(now);
   elements.visitorDate.textContent = localDateFormatter.format(now);
   elements.visitorDayOfYear.textContent = `${getDayOfYear(now)} / ${now.getFullYear()}`;
-
   worldClockConfig.forEach((clock, index) => {
     const timeElement = document.querySelector(`[data-world-time="${index}"]`);
-
     if (timeElement) {
       timeElement.textContent = getTimeFormatter(clock.timeZone).format(now);
       timeElement.dateTime = now.toISOString();
@@ -200,27 +190,29 @@ function updateTelemetry() {
 }
 
 function updateCountdown() {
-  const target = new Date(activeSiloConfig.validTo).getTime();
-  const remaining = target - Date.now();
-
+  const remaining = Date.parse(activeResolution.config.validTo) - Date.now();
   if (remaining <= 0) {
     elements.countdownText.textContent = "AWAITING NEW ENCLAVE AUTHORIZATION";
     return;
   }
-
   const totalSeconds = Math.floor(remaining / 1000);
   const days = Math.floor(totalSeconds / 86400);
   const hours = Math.floor((totalSeconds % 86400) / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
-
   elements.countdownText.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
 }
 
-renderConfig();
+[elements.alphaCode, elements.bravoCode, elements.charlieCode].forEach((button) => {
+  button.addEventListener("click", copyCode);
+});
+renderResolution();
 renderWorldClockRows();
 updateCountdown();
 updateTelemetry();
-loadSiloConfig();
+refreshSiloCodes();
 window.setInterval(updateCountdown, 1000);
 window.setInterval(updateTelemetry, 1000);
+window.setInterval(refreshSiloCodes, 15 * 60 * 1000);
+window.addEventListener("focus", refreshSiloCodes);
+window.addEventListener("online", refreshSiloCodes);

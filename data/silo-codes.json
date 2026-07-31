@@ -7,5 +7,11 @@
   "requiredItem": "Nuclear Keycard",
   "status": "AUTHORIZED",
   "source": "https://nukacrypt.com/api/codes",
-  "lastUpdated": "2026-07-30T03:29:19.194Z"
+  "lastUpdated": "2026-07-31T05:48:55.907Z",
+  "verification": "dual-source",
+  "verifiedAt": "2026-07-31T05:48:55.907Z",
+  "sources": [
+    "https://nukacrypt.com/api/codes",
+    "https://fo76silo.com/nuke-codes.json"
+  ]
 }
