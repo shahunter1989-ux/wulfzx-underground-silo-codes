@@ -1,127 +1,33 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-      name="description"
-      content="Wulfzx.Underground Enclave terminal dashboard for Fallout 76 weekly nuclear silo codes."
-    />
-    <title>Wulfzx.Underground | Enclave Silo Codes</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <main class="page-shell" aria-labelledby="page-title">
-      <h1 id="page-title" class="sr-only">
-        Fallout 76 Weekly Nuclear Silo Codes
-      </h1>
-
-      <section class="pipboy-stage" aria-label="Enclave Pip-Boy silo code terminal">
-        <div class="ambient-glow" aria-hidden="true"></div>
-
-        <div class="pipboy-frame">
-          <img
-            class="pipboy-image"
-            src="assets/pipboy-enclave.png"
-            alt="Black Enclave Pip-Boy terminal frame"
-          />
-
-          <div class="screen-overlay" aria-live="polite">
-            <div class="screen-crt" aria-hidden="true"></div>
-
-            <div class="terminal-content">
-              <p class="enclave-line">==== PROPERTY OF THE ENCLAVE ====</p>
-
-              <p class="terminal-title">FALLOUT 76 WEEKLY SILO CODES</p>
-
-              <dl class="terminal-grid">
-                <div class="grid-row grid-row-wide">
-                  <dt>VALID:</dt>
-                  <dd id="validRange">Jun 24 &ndash; Jul 1, 2026</dd>
-                </div>
-
-                <div class="code-row">
-                  <dt>SITE ALPHA</dt>
-                  <dd><button id="alphaCode" class="code-copy" data-silo="ALPHA" type="button" disabled>89778792</button></dd>
-                </div>
-
-                <div class="code-row">
-                  <dt>SITE BRAVO</dt>
-                  <dd><button id="bravoCode" class="code-copy" data-silo="BRAVO" type="button" disabled>30910055</button></dd>
-                </div>
-
-                <div class="code-row">
-                  <dt>SITE CHARLIE</dt>
-                  <dd><button id="charlieCode" class="code-copy" data-silo="CHARLIE" type="button" disabled>70360840</button></dd>
-                </div>
-
-                <div class="grid-row">
-                  <dt>RESET:</dt>
-                  <dd id="resetText">Every Tuesday &mdash; 5:00 PM PDT</dd>
-                </div>
-
-                <div class="grid-row grid-row-wide countdown-row">
-                  <dt>COUNTDOWN:</dt>
-                  <dd id="countdownText">--d --h --m --s</dd>
-                </div>
-
-                <div class="grid-row">
-                  <dt>REQUIRED:</dt>
-                  <dd id="requiredItem">Nuclear Keycard</dd>
-                </div>
-
-                <div class="grid-row">
-                  <dt>STATUS:</dt>
-                  <dd id="statusText">AUTHORIZED</dd>
-                </div>
-              </dl>
-            </div>
-          </div>
-        </div>
-
-        <p id="sourceWarning" class="source-warning" role="status" hidden></p>
-        <nav id="sourceHealth" class="source-health" aria-label="Silo code source health"></nav>
-
-        <section class="telemetry-hud" aria-label="World time telemetry">
-          <div class="visitor-telemetry">
-            <p class="hud-kicker">LOCAL TERMINAL</p>
-            <dl>
-              <div class="visitor-node visitor-node-zone">
-                <dt>ZONE</dt>
-                <dd id="visitorZone">--</dd>
-              </div>
-              <div class="visitor-node visitor-node-time">
-                <dt>TIME</dt>
-                <dd id="visitorTime">--:--:--</dd>
-              </div>
-              <div class="visitor-node visitor-node-date">
-                <dt>DATE</dt>
-                <dd id="visitorDate">--</dd>
-              </div>
-              <div class="visitor-node visitor-node-day">
-                <dt>DAY</dt>
-                <dd id="visitorDayOfYear">---</dd>
-              </div>
-            </dl>
-          </div>
-
-          <div class="world-telemetry">
-            <p class="hud-kicker">GLOBAL RELAY</p>
-            <div class="world-clock-grid" id="worldClockGrid"></div>
-          </div>
-        </section>
-
-        <footer class="site-footer">WULFZX.UNDERGROUND</footer>
-        <a class="home-link" href="https://wzxu.pro">Home</a>
-      </section>
-    </main>
-
-    <script type="module" src="script.js"></script>
-  </body>
-</html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080e0b">
+<meta name="description" content="WULFZX Enclave Personal Pip-Boy. A fan-made interactive terminal with live Fallout 76 silo codes, personal logbook, session timer and ambient sound.">
+<title>WULFZX | Enclave Personal Pip-Boy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet"><link rel="stylesheet" href="styles.css"></head>
+<body><a class="skip" href="#terminal">Skip to terminal</a><main class="workspace">
+<div class="outside-header"><span>WULFZX / PERSONAL DEVICES</span><span>ENCLAVE DIVISION · EPB–01</span></div>
+<div class="device" id="device"><div class="screen" id="screen">
+<header class="masthead"><div><h1>WULFZX</h1><p>ENCLAVE PERSONAL PIP-BOY</p></div><div class="clock"><time id="localTime">--:--:--</time><span id="localDate">LOCAL TERMINAL</span></div></header>
+<nav class="tabs" role="tablist" aria-label="Terminal applications">
+<button role="tab" id="tab-status" aria-controls="panel-status" aria-selected="true" data-tab="status">Status</button>
+<button role="tab" id="tab-codes" aria-controls="panel-codes" aria-selected="false" tabindex="-1" data-tab="codes">Silo codes</button>
+<button role="tab" id="tab-logbook" aria-controls="panel-logbook" aria-selected="false" tabindex="-1" data-tab="logbook">Logbook</button>
+<button role="tab" id="tab-signal" aria-controls="panel-signal" aria-selected="false" tabindex="-1" data-tab="signal">Signal</button>
+<button role="tab" id="tab-system" aria-controls="panel-system" aria-selected="false" tabindex="-1" data-tab="system">System</button></nav>
+<div class="viewport" id="terminal" tabindex="-1">
+<section role="tabpanel" id="panel-status" aria-labelledby="tab-status">
+<div class="section-line">STATUS <span>PERSONAL TERMINAL ONLINE</span></div>
+<div class="status-layout"><div class="greeting"><h2 id="greeting">Welcome back, Operator.</h2><p>Your personal field terminal is online.</p><div class="section-line timer-label">SESSION TIMER</div><output id="sessionTime" class="timer" aria-label="Session elapsed time">00:00:00</output><div class="actions"><button id="sessionToggle" class="primary">Start session</button><button id="sessionReset">Reset</button></div></div>
+<aside class="status-aside"><div class="section-line">DAILY FIELD NOTES</div><div class="note-preview"><p id="notePreview">No entries yet. Record a thought. Plan your next expedition.</p><button class="text-button" data-open="logbook">Open logbook →</button></div><div class="section-line condition-label">TERMINAL CONDITION</div><div class="condition"><strong>SYSTEM NOMINAL</strong><span id="storageStatus">LOCAL STORAGE READY</span></div></aside></div>
+<div class="section-line summary-label">SILO CODES <button class="text-button" data-open="codes">Open relay →</button></div><div class="silo-summary"><button data-open="codes"><span>ALPHA</span><strong data-summary="alpha">--------</strong></button><button data-open="codes"><span>BRAVO</span><strong data-summary="bravo">--------</strong></button><button data-open="codes"><span>CHARLIE</span><strong data-summary="charlie">--------</strong></button></div>
+</section>
+<section role="tabpanel" id="panel-codes" aria-labelledby="tab-codes" hidden><div class="section-line">NUCLEAR SILO RELAY <span id="statusText">SYNCING</span></div><h2 id="relayHeading">Contacting the relay.</h2><p class="intro">Fallout 76 weekly codes. Select a current code to copy.</p>
+<div class="code-grid"><button class="code-copy" id="alphaCode" data-silo="alpha" disabled><span>SITE ALPHA</span><strong>--------</strong><small>Copy code</small></button><button class="code-copy" id="bravoCode" data-silo="bravo" disabled><span>SITE BRAVO</span><strong>--------</strong><small>Copy code</small></button><button class="code-copy" id="charlieCode" data-silo="charlie" disabled><span>SITE CHARLIE</span><strong>--------</strong><small>Copy code</small></button></div>
+<p id="sourceWarning" class="warning" role="status">Establishing secure relay…</p><div class="relay-details"><div><span>NEXT RESET · YOUR LOCAL TIME</span><strong id="resetText">Waiting for relay</strong></div><div><span>TIME REMAINING</span><strong id="countdownText">--</strong></div></div><div class="section-line">RELAY CONTROL <button id="refreshCodes" class="text-button">Refresh relay ↻</button></div><p class="quiet">Required in game: one nuclear keycard. This terminal does not connect to your game.</p></section>
+<section role="tabpanel" id="panel-logbook" aria-labelledby="tab-logbook" hidden><div class="section-line">PERSONAL ARCHIVE <span id="noteCount">0 ENTRIES</span></div><h2>Leave a record.</h2><p class="intro">Your thoughts, plans, and field notes. Saved on this browser.</p><div class="log-layout"><form id="noteForm"><label for="noteTitle">ENTRY TITLE</label><input id="noteTitle" maxlength="80" placeholder="A new expedition" required><label for="noteBody">FIELD NOTES</label><textarea id="noteBody" maxlength="4000" rows="5" placeholder="What is worth remembering?" required></textarea><button type="submit" class="primary">Save entry</button></form><div class="archive"><div id="notesList"></div><button id="exportNotes" class="text-button">Export logbook ↓</button><button id="undoDelete" class="text-button" hidden>Undo last removal</button></div></div></section>
+<section role="tabpanel" id="panel-signal" aria-labelledby="tab-signal" hidden><div class="section-line">RADIO RECEIVER <span id="signalState">STANDBY</span></div><h2>Music from another time.</h2><p class="intro">Tune into vintage radio, or switch to a quiet ambient channel.</p><div class="signal-display" aria-hidden="true"><div class="signal-bars"></div><span id="signalLabel">CARRIER OFFLINE</span></div><div class="signal-controls"><label>CHANNEL<select id="channel"><option value="megaton">Megaton Cafe · vintage live radio</option><option value="bunker">Bunker hum</option><option value="relay">Deep-space relay</option><option value="night">Night watch</option></select></label><label>VOLUME <output id="volumeValue">20%</output><input id="volume" type="range" min="0" max="60" value="20"></label></div><button id="signalToggle" class="primary">Enable audio</button><p class="quiet"><a href="https://www.megatoncaferadio.com/" target="_blank" rel="noopener noreferrer">Megaton Cafe Radio ↗</a> · Independent live station, 1920s–1950s. Includes period announcements. Ambient channels are generated locally.</p></section>
+<section role="tabpanel" id="panel-system" aria-labelledby="tab-system" hidden><div class="section-line">TERMINAL CONFIGURATION <span>EPB–01</span></div><h2>Make it yours.</h2><div class="settings"><label>OPERATOR NAME<input id="operatorName" maxlength="24" placeholder="Operator"></label><label>PHOSPHOR<select id="phosphor"><option value="green">Enclave green</option><option value="amber">Amber archive</option><option value="ice">Ice blue</option></select></label><label>SCREEN BRIGHTNESS<input id="brightness" type="range" min="75" max="115" value="100"></label><label class="check"><input id="motion" type="checkbox" checked> Screen animation</label><label class="check"><input id="scanlines" type="checkbox" checked> CRT scanlines</label><label class="check"><input id="clickSounds" type="checkbox" checked> Button sounds when audio is on</label></div><div class="system-note"><strong>YOUR TERMINAL. YOUR DEVICE.</strong><p>Notes and preferences stay in this browser. Export your logbook to keep a backup.</p><p>Fan-made Fallout-inspired experience. Not affiliated with Bethesda. No game account connection.</p></div></section>
+</div><footer class="screen-footer"><span id="footerStatus">PERSONAL TERMINAL · LOCAL STORAGE</span><nav class="network-links" aria-label="WZXU websites"><a href="https://wzxu.pro" target="_blank" rel="noopener noreferrer">WZXU.PRO ↗</a><a href="https://wzxu76.pro" target="_blank" rel="noopener noreferrer">WZXU76.PRO ↗</a></nav><button id="audioToggle" class="text-button" aria-pressed="false">Audio off</button></footer>
+<div id="standby" class="standby" hidden><span>WULFZX</span><p>TERMINAL IN STANDBY</p><button id="wake" class="primary">Power on</button></div></div>
+<div class="hardware"><button id="power" aria-label="Put terminal in standby" aria-pressed="true"><span class="knob-face power-face" aria-hidden="true"></span></button><button id="selector" aria-label="Select next terminal tab"><span class="knob-face selector-face" aria-hidden="true"></span></button><div class="hardware-tabs" aria-label="Device selector shortcuts"><button data-open="status" aria-label="Open status" aria-pressed="true"></button><button data-open="codes" aria-label="Open silo codes" aria-pressed="false"></button><button data-open="logbook" aria-label="Open logbook" aria-pressed="false"></button><button data-open="signal" aria-label="Open signal" aria-pressed="false"></button><button data-open="system" aria-label="Open system" aria-pressed="false"></button></div></div></div>
+<footer class="outside-footer"><span>FOR A SAFER TOMORROW.</span><span>Fan-made. Personally operated.</span><a href="https://wzxu.pro" target="_blank" rel="noopener noreferrer">WULFZX NETWORK ↗</a></footer><div id="toast" role="status" class="toast" hidden></div><noscript>This personal terminal requires JavaScript for its applications and current silo codes.</noscript></main><script type="module" src="script.js"></script></body></html>
