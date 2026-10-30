@@ -1,15 +1,15 @@
 {
-  "alpha": "54403282",
-  "bravo": "06979747",
-  "charlie": "41185730",
-  "validFrom": "2026-10-22T17:00:00-07:00",
-  "validTo": "2026-10-29T17:00:00-07:00",
+  "alpha": "82272317",
+  "bravo": "29555318",
+  "charlie": "89672304",
+  "validFrom": "2026-10-29T17:00:00-07:00",
+  "validTo": "2026-11-05T16:00:00-08:00",
   "requiredItem": "Nuclear Keycard",
   "status": "AUTHORIZED",
   "source": "https://nukacrypt.com/api/codes",
-  "lastUpdated": "2026-10-23T01:28:02.445Z",
+  "lastUpdated": "2026-10-30T01:55:53.013Z",
   "verification": "dual-source",
-  "verifiedAt": "2026-10-23T01:28:02.445Z",
+  "verifiedAt": "2026-10-30T01:55:53.013Z",
   "sources": [
     "https://nukacrypt.com/api/codes",
     "https://fo76silo.com/nuke-codes.json"
